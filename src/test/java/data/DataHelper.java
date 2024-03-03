@@ -16,11 +16,11 @@ public class DataHelper {
 
     @Value
     public static class CardData {
-        String number;
-        String month;
-        String year;
-        String holder;
-        String cvc;
+        private final String number;
+        private final String month;
+        private final String year;
+        private final String holder;
+        private final String cvc;
     }
 
 
@@ -98,10 +98,6 @@ public class DataHelper {
 
     public static String generateValidCVC() {
         return faker.numerify("###");
-    }
-
-    public static String generateInvalidCVCWith2Digit() {
-        return faker.numerify("##");
     }
 
     public static String generateRandomSingleDigit() {
