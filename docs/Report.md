@@ -10,9 +10,10 @@
 ## Результаты тестирования
 Реализовано 64 авто тестов, из них успешных 36.
 Визуализация отчетов Allure по результатам прохождения:
-![1.PNG](..%2F..%2F..%2FDesktop%2F1.PNG)
-![2.PNG](..%2F..%2F..%2FDesktop%2F2.PNG)
-![3.PNG](..%2F..%2F..%2FDesktop%2F3.PNG)
+
+![1](https://github.com/Zerodoom675/Diplom/assets/115937460/b37ca21f-c60c-4102-9ed8-8895cc3f3e6b)
+![2](https://github.com/Zerodoom675/Diplom/assets/115937460/667f5b4a-90c9-4a6f-bff1-1614715808df)
+![3](https://github.com/Zerodoom675/Diplom/assets/115937460/3f720a92-bd4e-423e-94fb-d1941af4c41a)
 
 # Тестовое окружение
 - **Операционная система:** Windows 10 Pro 21H1
