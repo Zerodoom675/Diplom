@@ -37,7 +37,7 @@ public class DataHelperSQL {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PaymentEntity {
+    public static class PaymentOrganization {
         private String id;
         private int amount;
         private Timestamp created;
@@ -46,10 +46,10 @@ public class DataHelperSQL {
     }
 
     @SneakyThrows
-    public static List<PaymentEntity> getPayments() {
+    public static List<PaymentOrganization> getPayments() {
         setup();
         var sqlQuery = "SELECT * FROM payment_entity ORDER BY created DESC;";
-        ResultSetHandler<List<PaymentEntity>> resultHandler = new BeanListHandler<>(PaymentEntity.class);
+        ResultSetHandler<List<PaymentOrganization>> resultHandler = new BeanListHandler<>(PaymentOrganization.class);
         return runner.query(conn, sqlQuery, resultHandler);
     }
 

@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 
-public class TripFormPage {
+public class PaymentPage {
     private static final SelenideElement dailyTripCard = $x("//div[@id='root']/div/div[contains(@class, 'card')]");
 
     private static final SelenideElement payButton = $x("//span[text()='Купить']//ancestor::button");
@@ -33,7 +33,7 @@ public class TripFormPage {
     private static final SelenideElement errorNotification = $x("//div[contains(@class, 'notification_status_error')]");
     private static final SelenideElement errorCloseButton = errorNotification.$x("./button");
 
-    public TripFormPage() {
+    public PaymentPage() {
         dailyTripCard.should(Condition.visible);
         payButton.should(Condition.visible);
         creditButton.should(Condition.visible);

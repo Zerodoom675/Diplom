@@ -10,25 +10,31 @@ import java.util.Locale;
 
 public class DataHelper {
     private static final Faker faker = new Faker(Locale.ENGLISH);
-    private static final Faker fakerWithCyrillicLocale = new Faker(new Locale("ru", "RU"));
+    private static final Faker fakerWithCyrillicLocale = new Faker(new Locale(
+            "ru",
+            "RU"));
 
     @Value
     public static class CardData {
-        private final String number;
-        private final String month;
-        private final String year;
-        private final String holder;
-        private final String cvc;
+        String number;
+        String month;
+        String year;
+        String holder;
+        String cvc;
     }
 
 
     public static CardData getValidApprovedCard() {
-        return new CardData(getNumberByStatus("approved"), generateMonth(1), generateYear(2),
+        return new CardData(getNumberByStatus("approved"),
+                generateMonth(1),
+                generateYear(2),
                 generateValidHolder(), generateValidCVC());
     }
 
     public static CardData getValidDeclinedCard() {
-        return new CardData(getNumberByStatus("declined"), generateMonth(1), generateYear(2),
+        return new CardData(getNumberByStatus("declined"),
+                generateMonth(1),
+                generateYear(2),
                 generateValidHolder(), generateValidCVC());
     }
 
@@ -41,7 +47,7 @@ public class DataHelper {
         return null;
     }
 
-    public static String generateValidCardNumberWith13Digits() {
+    public static String generateAValid13DigitCardNumber() {
         return faker.numerify("4444 4444 4444 4");
     }
 
@@ -67,25 +73,25 @@ public class DataHelper {
                 + faker.name().lastName().toUpperCase();
     }
 
-    public static String generateInvalidHolderWithCyrillicSymbols() {
+    public static String createInvalidHolderWithCyrillicCharacters() {
         return fakerWithCyrillicLocale.name().firstName().toUpperCase() + " "
                 + fakerWithCyrillicLocale.name().lastName().toUpperCase();
     }
 
-    public static String generateInvalidHolderWithCyrillicSymbols45() {
+    public static String createInvalidHolderWith45CyrillicCharacters() {
         return fakerWithCyrillicLocale.name().firstName().toUpperCase() + 45 + " "
                 + fakerWithCyrillicLocale.name().lastName().toUpperCase() + 45;
     }
 
-    public static String generateInvalidHolderFirstNameRuLastEn() {
+    public static String createIncorrectOwnerNameRuLastNameEn() {
         return fakerWithCyrillicLocale.name().firstName().toUpperCase() + faker.name().lastName().toUpperCase();
     }
 
-    public static String generateInvalidHolderFirstNameEnLastRu() {
+    public static String createIncorrectOwnerNameEnLastNameRu() {
         return faker.name().firstName().toUpperCase() + fakerWithCyrillicLocale.name().lastName().toUpperCase();
     }
 
-    public static String generateInvalidHolderFirstNameEn() {
+    public static String createInvalidOwnerNameEn() {
         return faker.name().firstName().toUpperCase();
     }
 
@@ -98,7 +104,7 @@ public class DataHelper {
         return faker.numerify("##");
     }
 
-    public static String generateRandomOneDigit() {
+    public static String generateRandomSingleDigit() {
         return faker.numerify("#");
     }
 

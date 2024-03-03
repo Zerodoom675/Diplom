@@ -5,7 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.$x;
 
-public class TripCardPage {
+public class CardPage {
     private static final SelenideElement dailyTripHeading = $x("//div[@id='root']/div/h2");
     private static final SelenideElement dailyTripCard = $x("//div[@id='root']/div/div[contains(@class, 'card')]");
 
@@ -17,7 +17,7 @@ public class TripCardPage {
     private static final SelenideElement successNotification = $x("//div[contains(@class, 'notification_status_ok')]");
     private static final SelenideElement errorNotification = $x("//div[contains(@class, 'notification_status_error')]");
 
-    public TripCardPage() {
+    public CardPage() {
         dailyTripHeading.should(Condition.visible, Condition.text("Путешествие дня"));
         dailyTripCard.should(Condition.visible);
 
@@ -30,16 +30,16 @@ public class TripCardPage {
         errorNotification.should(Condition.hidden);
     }
 
-    public TripFormPage clickPayButton() {
+    public PaymentPage clickPayButton() {
         payButton.click();
         formHeading.should(Condition.visible, Condition.text("Оплата по карте"));
-        return new TripFormPage();
+        return new PaymentPage();
     }
 
-    public TripFormPage clickCreditButton() {
+    public PaymentPage clickCreditButton() {
         creditButton.click();
         formHeading.should(Condition.visible, Condition.text("Кредит по данным карты"));
-        return new TripFormPage();
+        return new PaymentPage();
     }
 
     public int getAmount() {
