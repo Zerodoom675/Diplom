@@ -8,10 +8,11 @@ import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
 
-public class APIHelper{
+public class APIHelper {
+    private static final String appUrl = System.getenv("APP_URL") != null ? System.getenv("APP_URL") : "http://localhost:8080";
+
     private static final RequestSpecification spec = new RequestSpecBuilder()
-            .setBaseUri("http://localhost")
-            .setPort(8080)
+            .setBaseUri(appUrl)
             .setAccept(ContentType.JSON)
             .setContentType(ContentType.JSON)
             .log(LogDetail.ALL)
@@ -29,6 +30,7 @@ public class APIHelper{
                 .then()
                 .statusCode(200);
     }
+
     public static void executeRequest500(Object requestBody, String endpoint) {
         Gson gson = new Gson();
         var body = gson.toJson(requestBody);

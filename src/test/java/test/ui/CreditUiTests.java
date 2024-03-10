@@ -3,20 +3,22 @@ package test.ui;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import data.DataHelper;
 import data.DataHelperSQL;
-import io.qameta.allure.*;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import io.qameta.allure.selenide.AllureSelenide;
-import org.testng.annotations.*;
+import org.junit.jupiter.api.*;
 import page.CardPage;
 import page.PaymentPage;
 
 import java.util.List;
 
 import static com.codeborne.selenide.Selenide.open;
-import static org.testng.AssertJUnit.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("UI тестирование функционала Путешествие дня")
 @Feature("Покупка тура в кредит")
 public class CreditUiTests {
+    private static final String appUrl = System.getenv("APP_URL") != null ? System.getenv("APP_URL") : "http://localhost:8080";
     private static DataHelper.CardData cardData;
     private static CardPage travelCard;
     private static PaymentPage travelForm;
@@ -24,31 +26,29 @@ public class CreditUiTests {
     private static List<DataHelperSQL.CreditRequestEntity> credits;
     private static List<DataHelperSQL.OrderEntity> orders;
 
-    @BeforeClass
-    public void setupClass() {
+    @BeforeAll
+    public static void setupClass() {
         DataHelperSQL.setDown();
-        SelenideLogger.addListener("allure", new AllureSelenide()
-                .screenshots(true).savePageSource(true));
+        SelenideLogger.addListener("allure", new AllureSelenide().screenshots(true).savePageSource(true));
     }
 
-    @BeforeMethod
+    @AfterAll
+    public static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
+
+    @BeforeEach
     public void setupMethod() {
-        open("http://localhost:8080/");
+        open(appUrl);
         travelCard = new CardPage();
     }
 
-    @AfterMethod
+    @AfterEach
     public void setDownMethod() {
         DataHelperSQL.setDown();
     }
 
-    @AfterClass
-    public void setDownClass() {
-        SelenideLogger.removeListener("allure");
-    }
-
-    @Story("Позитивный сценарий")
-    @Severity(SeverityLevel.BLOCKER)
+    @DisplayName("Позитивный сценарий")
     @Test
     public void shouldHappyPath() {
         cardData = DataHelper.getValidApprovedCard();
@@ -81,8 +81,7 @@ public class CreditUiTests {
         assertNull(orders.get(0).getCredit_id());
     }
 
-    @Story("Негативный сценарий")
-    @Severity(SeverityLevel.BLOCKER)
+    @DisplayName("Негативный сценарий")
     @Test
     public void shouldSadPath() {
         cardData = DataHelper.getValidDeclinedCard();
@@ -115,8 +114,7 @@ public class CreditUiTests {
         assertNull(orders.get(0).getCredit_id());
     }
 
-    @Story("Переключение с формы оплаты на форму кредита")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Переключение с формы оплаты на форму кредита")
     @Test
     public void switchingFromPaymentFormToCreditForm() {
         cardData = DataHelper.getValidApprovedCard();
@@ -138,13 +136,11 @@ public class CreditUiTests {
     }
 
     //Валидные значения
-    @Story("Имя и фамилия на латинице состоящие из 2 символов")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Имя и фамилия на латинице состоящие из 2 символов")
     @Test
     public void firstAndLastNameInLatinConsistingOf2Characters() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = "Qw Qw";
-        var matchesHolder = holder;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -157,18 +153,16 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder,
+                holder,
                 cardData.getCvc());
         travelForm.assertBuyOperationIsSuccessful();
     }
 
-    @Story("Имя и фамилия на латинице состоящие из 35 символов")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Имя и фамилия на латинице состоящие из 35 символов")
     @Test
     public void firstAndLastNameInLatinConsistingOf35Characters() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = "Qwertyqwertyqwertyqwertyqwertyqwert Qwertyqwertyqwertyqwertyqwertyqwert";
-        var matchesHolder = holder;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -181,18 +175,16 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder,
+                holder,
                 cardData.getCvc());
         travelForm.assertBuyOperationIsSuccessful();
     }
 
-    @Story("Имя через дефис и фамилия на латинице")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Имя через дефис и фамилия на латинице")
     @Test
     public void hyphenatedFirstNameAndLastNameInLatin() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = DataHelper.generateInvalidHolder();
-        var matchesHolder = holder;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -205,15 +197,12 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder,
+                holder,
                 cardData.getCvc());
         travelForm.assertBuyOperationIsSuccessful();
     }
 
-    //Невалидные значения
-    // Поле "Номер карты"
-    @Story("Пустое поле номер карты")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое поле номер карты")
     @Test
     public void emptyCardNumberField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -230,17 +219,15 @@ public class CreditUiTests {
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("number","Поле обязательно для заполнения");
+        travelForm.assertField("number", "Поле обязательно для заполнения");
     }
 
 
-    @Story("Заполнение поля номера карты c пробелами вначале и в конце")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Заполнение поля номера карты c пробелами вначале и в конце")
     @Test
     public void fillingOutTheCardNumberFieldWithSpacesAtTheBeginningAndAtTheEnd() {
         cardData = DataHelper.getValidApprovedCard();
         var number = " " + cardData.getNumber() + " ";
-        var matchesNumber = number;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -250,21 +237,19 @@ public class CreditUiTests {
                 cardData.getHolder(),
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
-                matchesNumber,
+                number,
                 cardData.getMonth(),
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("number","Неверный формат");
+        travelForm.assertField("number", "Неверный формат");
     }
 
-    @Story("13 цифр в поле номера карты")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("13 цифр в поле номера карты")
     @Test
     public void theCardNumberFieldHas13Digits() {
         cardData = DataHelper.getValidApprovedCard();
         var number = DataHelper.generateAValid13DigitCardNumber();
-        var matchesNumber = number;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -274,21 +259,19 @@ public class CreditUiTests {
                 cardData.getHolder(),
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
-                matchesNumber,
+                number,
                 cardData.getMonth(),
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("number","Неверный формат");
+        travelForm.assertField("number", "Неверный формат");
     }
 
-    @Story("Нули в поле номера карты")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Нули в поле номера карты")
     @Test
     public void zerosInTheCardNumberField() {
         cardData = DataHelper.getValidApprovedCard();
         var number = DataHelper.generateValidCardNumberWith0Digits();
-        var matchesNumber = number;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -298,17 +281,16 @@ public class CreditUiTests {
                 cardData.getHolder(),
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
-                matchesNumber,
+                number,
                 cardData.getMonth(),
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("number","Неверный формат");
+        travelForm.assertField("number", "Неверный формат");
     }
 
     // Поле "Месяц"
-    @Story("Пустое поле месяц")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое поле месяц")
     @Test
     public void emptyMonthField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -328,16 +310,14 @@ public class CreditUiTests {
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("month","Поле обязательно для заполнения");
+        travelForm.assertField("month", "Поле обязательно для заполнения");
     }
 
-    @Story("Заполнение поля месяц значением 1")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Заполнение поля месяц значением 1")
     @Test
     public void fillingTheMonthFieldWithOne() {
         cardData = DataHelper.getValidApprovedCard();
         var month = "1";
-        var matchesMonth = month;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -348,20 +328,18 @@ public class CreditUiTests {
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
-                matchesMonth,
+                month,
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("month","Неверный формат");
+        travelForm.assertField("month", "Неверный формат");
     }
 
-    @Story("Заполнение поля месяц значением 00")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Заполнение поля месяц значением 00")
     @Test
     public void fillingTheMonthFieldWithZeros() {
         cardData = DataHelper.getValidApprovedCard();
         var month = "00";
-        var matchesMonth = month;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -372,20 +350,18 @@ public class CreditUiTests {
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
-                matchesMonth,
+                month,
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("month","Неверно указан срок действия карты");
+        travelForm.assertField("month", "Неверно указан срок действия карты");
     }
 
-    @Story("Заполнение поля месяц значением 13")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Заполнение поля месяц значением 13")
     @Test
     public void fillingTheMonthFieldWithTheValue13() {
         cardData = DataHelper.getValidApprovedCard();
         var month = "13";
-        var matchesMonth = month;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -396,21 +372,18 @@ public class CreditUiTests {
                 cardData.getCvc());
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
-                matchesMonth,
+                month,
                 cardData.getYear(),
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("month","Неверно указан срок действия карты");
+        travelForm.assertField("month", "Неверно указан срок действия карты");
     }
 
-    // Поле "Год"
-    @Story("Пустое поле год")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое поле год")
     @Test
     public void emptyYearField() {
         cardData = DataHelper.getValidApprovedCard();
         var year = "";
-        var matchesYear = year;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -422,19 +395,17 @@ public class CreditUiTests {
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
                 cardData.getMonth(),
-                matchesYear,
+                year,
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("year","Поля обязательно для заполнения");
+        travelForm.assertField("year", "Поля обязательно для заполнения");
     }
 
-    @Story("Нули в поле год")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Нули в поле год")
     @Test
     public void zerosInTheYearField() {
         cardData = DataHelper.getValidApprovedCard();
         var year = "00";
-        var matchesYear = year;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -446,20 +417,17 @@ public class CreditUiTests {
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
                 cardData.getMonth(),
-                matchesYear,
+                year,
                 cardData.getHolder(),
                 cardData.getCvc());
-        travelForm.assertField("year","Истёк срок действия карты");
+        travelForm.assertField("year", "Истёк срок действия карты");
     }
 
-    // Поле "Владелец"
-    @Story("Пустое поле владелец")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое поле владелец")
     @Test
     public void emptyOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = "";
-        var matchesHolder = holder;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -472,17 +440,17 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder, cardData.getCvc());
-        travelForm.assertField("holder","Поле обязательно для заполнения");
+                holder,
+                cardData.getCvc());
+        travelForm.assertField("holder", "Поле обязательно для заполнения");
     }
 
-    @Story("Пробелы вначале и в конце поля владелец")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пробелы вначале и в конце поля владелец")
     @Test
     public void spacesAtTheBeginningAndAtTheEndOfTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = " " + cardData.getHolder() + " ";
-        var matchesHolder = holder;
+
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -495,18 +463,16 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder,
+                holder,
                 cardData.getCvc());
-        travelForm.assertField("holder","Неверный формат");
+        travelForm.assertField("holder", "Неверный формат");
     }
 
-    @Story("Кириллица в поле владелец")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Кириллица в поле владелец")
     @Test
     public void cyrillicInTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
         var holder = DataHelper.createInvalidHolderWithCyrillicCharacters();
-        var matchesHolder = holder;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -519,13 +485,12 @@ public class CreditUiTests {
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                matchesHolder,
+                holder,
                 cardData.getCvc());
-        travelForm.assertField("holder","Неверный формат");
+        travelForm.assertField("holder", "Неверный формат");
     }
 
-    @Story("Кириллица + цифры в поле владелец")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Кириллица + цифры в поле владелец")
     @Test
     public void cyrillicAndNumbersInTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -545,11 +510,10 @@ public class CreditUiTests {
                 cardData.getYear(),
                 matchesHolder,
                 cardData.getCvc());
-        travelForm.assertField("holder","Неверный формат");
+        travelForm.assertField("holder", "Неверный формат");
     }
 
-    @Story("Латинское имя без фамилии в поле владелец")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Латинское имя без фамилии в поле владелец")
     @Test
     public void latinNameWithoutSurnameInTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -572,8 +536,7 @@ public class CreditUiTests {
         travelForm.assertBuyOperationIsSuccessful();
     }
 
-    @Story("Имя на кириллице, фамилия на латинице в поле владелец")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Имя на кириллице, фамилия на латинице в поле владелец")
     @Test
     public void firstNameInCyrillicLastNameInLatinInTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -593,11 +556,10 @@ public class CreditUiTests {
                 cardData.getYear(),
                 matchesHolder,
                 cardData.getCvc());
-        travelForm.assertField("holder","Неверный формат");
+        travelForm.assertField("holder", "Неверный формат");
     }
 
-    @Story("Имя на латинице, фамилия на кириллице в поле владелец")
-    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Имя на латинице, фамилия на кириллице в поле владелец")
     @Test
     public void firstNameInLatinLastNameInCyrillicInTheOwnerField() {
         cardData = DataHelper.getValidApprovedCard();
@@ -617,35 +579,32 @@ public class CreditUiTests {
                 cardData.getYear(),
                 matchesHolder,
                 cardData.getCvc());
-        travelForm.assertField("holder","Неверный формат");
+        travelForm.assertField("holder", "Неверный формат");
     }
 
-    // CVC/CVV
-    @Story("Пустое поле CVC/CVV")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое поле CVC/CVV")
     @Test
     public void blankCVCField() {
         cardData = DataHelper.getValidApprovedCard();
         var cvc = "";
-        var matchesCvc = cvc;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
-                cardData.getHolder(), cvc);
+                cardData.getHolder(),
+                cvc);
         travelForm.matchesByInsertValue(
                 cardData.getNumber(),
                 cardData.getMonth(),
                 cardData.getYear(),
                 cardData.getHolder(),
-                matchesCvc);
-        travelForm.assertField("cvc","Поле обязательно для заполнения");
+                cvc);
+        travelForm.assertField("cvc", "Поле обязательно для заполнения");
     }
 
-    @Story("4 цифры в поле CVC/CVV")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("4 цифры в поле CVC/CVV")
     @Test
     public void CVCFieldHas4Digits() {
         cardData = DataHelper.getValidApprovedCard();
@@ -668,13 +627,11 @@ public class CreditUiTests {
         travelForm.assertBuyOperationIsSuccessful();
     }
 
-    @Story("Нули в поле CVC/CVV")
-    @Severity(SeverityLevel.MINOR)
+    @DisplayName("Нули в поле CVC/CVV")
     @Test
     public void zerosInTheCVCField() {
         cardData = DataHelper.getValidApprovedCard();
         var cvc = "000";
-        var matchesCvc = cvc;
 
         travelForm = travelCard.clickPayButton();
         travelForm.insertingValueInForm(
@@ -688,7 +645,7 @@ public class CreditUiTests {
                 cardData.getMonth(),
                 cardData.getYear(),
                 cardData.getHolder(),
-                matchesCvc);
+                cvc);
         travelForm.assertBuyOperationIsSuccessful();
     }
 }

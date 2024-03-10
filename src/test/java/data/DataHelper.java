@@ -9,40 +9,36 @@ import java.util.Locale;
 
 
 public class DataHelper {
+    public static final String APPROVED_CARD_NUMBER = "4444 4444 4444 4441";
+    public static final String DECLINED_CARD_NUMBER = "4444 4444 4444 4442";
     private static final Faker faker = new Faker(Locale.ENGLISH);
     private static final Faker fakerWithCyrillicLocale = new Faker(new Locale(
             "ru",
             "RU"));
 
-    @Value
-    public static class CardData {
-        private final String number;
-        private final String month;
-        private final String year;
-        private final String holder;
-        private final String cvc;
-    }
-
-
     public static CardData getValidApprovedCard() {
-        return new CardData(getNumberByStatus("approved"),
+        return new CardData(
+                APPROVED_CARD_NUMBER,
                 generateMonth(1),
                 generateYear(2),
-                generateValidHolder(), generateValidCVC());
+                generateValidHolder(),
+                generateValidCVC());
     }
 
     public static CardData getValidDeclinedCard() {
-        return new CardData(getNumberByStatus("declined"),
+        return new CardData(
+                DECLINED_CARD_NUMBER,
                 generateMonth(1),
                 generateYear(2),
-                generateValidHolder(), generateValidCVC());
+                generateValidHolder(),
+                generateValidCVC());
     }
 
     public static String getNumberByStatus(String status) {
         if (status.equalsIgnoreCase("APPROVED")) {
-            return "4444 4444 4444 4441";
+            return APPROVED_CARD_NUMBER;
         } else if (status.equalsIgnoreCase("DECLINED")) {
-            return "4444 4444 4444 4442";
+            return DECLINED_CARD_NUMBER;
         }
         return null;
     }
@@ -50,7 +46,6 @@ public class DataHelper {
     public static String generateAValid13DigitCardNumber() {
         return faker.numerify("4444 4444 4444 4");
     }
-
 
     public static String generateValidCardNumberWith0Digits() {
         return faker.numerify("0000 0000 0000 0000");
@@ -95,13 +90,21 @@ public class DataHelper {
         return faker.name().firstName().toUpperCase();
     }
 
-
     public static String generateValidCVC() {
         return faker.numerify("###");
     }
 
     public static String generateRandomSingleDigit() {
         return faker.numerify("#");
+    }
+
+    @Value
+    public static class CardData {
+        String number;
+        String month;
+        String year;
+        String holder;
+        String cvc;
     }
 
 }

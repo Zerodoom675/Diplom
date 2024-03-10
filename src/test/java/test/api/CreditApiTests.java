@@ -1,53 +1,50 @@
 package test.api;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.google.gson.Gson;
 import data.APIHelper;
 import data.DataHelper;
 import data.DataHelperSQL;
-import io.qameta.allure.*;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import io.qameta.allure.selenide.AllureSelenide;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @Epic("API тестирование функционала Путешествие дня")
 @Feature("Покупка тура в кредит")
 public class CreditApiTests {
-    private static DataHelper.CardData cardData;
-    private static final Gson gson = new Gson();
     private static final String creditUrl = "/api/v1/credit";
+    private static DataHelper.CardData cardData;
     private static List<DataHelperSQL.PaymentOrganization> payments;
     private static List<DataHelperSQL.CreditRequestEntity> credits;
     private static List<DataHelperSQL.OrderEntity> orders;
 
-    @BeforeClass
-    public void setupClass() {
+    @BeforeAll
+    static void setUpAll() {
         DataHelperSQL.setDown();
         SelenideLogger.addListener(
                 "allure",
                 new AllureSelenide().screenshots(true).savePageSource(true));
     }
 
-    @AfterMethod
-    public void setDownMethod() {
-        DataHelperSQL.setDown();
-    }
-
-    @AfterClass
-    public void setDownClass() {
+    @BeforeAll
+    public static void tearDownAll() {
         SelenideLogger.removeListener("allure");
     }
 
-    @Story("Пустое тело запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @AfterEach
+    public void teardrop() {
+        DataHelperSQL.setDown();
+    }
+
+    @DisplayName("Пустое тело запроса")
     @Test
     public void statusShouldBe400WithEmptyBody() {
         cardData = DataHelper.getValidApprovedCard();
@@ -60,8 +57,7 @@ public class CreditApiTests {
         assertEquals(1, orders.size());
     }
 
-    @Story("Пустое значение у атрибута number в теле запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое значение у атрибута number в теле запроса")
     @Test
     public void statusShouldBe400WithEmptyNumber() {
         cardData = new DataHelper.CardData(
@@ -79,8 +75,7 @@ public class CreditApiTests {
         assertEquals(0, orders.size());
     }
 
-    @Story("Пустое значение у атрибута month в теле запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое значение у атрибута month в теле запроса")
     @Test
     public void statusShouldBe400WithEmptyMonth() {
         cardData = new DataHelper.CardData(
@@ -98,8 +93,7 @@ public class CreditApiTests {
         assertEquals(1, orders.size());
     }
 
-    @Story("Пустое значение у атрибута year в теле запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое значение у атрибута year в теле запроса")
     @Test
     public void statusShouldBe400WithEmptyYear() {
         cardData = new DataHelper.CardData(
@@ -117,8 +111,7 @@ public class CreditApiTests {
         assertEquals(1, orders.size());
     }
 
-    @Story("Пустое значение у атрибута holder в теле запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое значение у атрибута holder в теле запроса")
     @Test
     public void statusShouldBe400WithEmptyHolder() {
         cardData = new DataHelper.CardData(
@@ -136,8 +129,7 @@ public class CreditApiTests {
         assertEquals(1, orders.size());
     }
 
-    @Story("Пустое значение у атрибута cvc в теле запроса")
-    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Пустое значение у атрибута cvc в теле запроса")
     @Test
     public void statusShouldBe400WithEmptyCvc() {
         cardData = new DataHelper.CardData(
