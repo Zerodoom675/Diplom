@@ -13,10 +13,9 @@
 
 Реализовано 64 авто тестов, из них успешных 36.
 Визуализация отчетов Allure по результатам прохождения:
-
-![1](https://github.com/Zerodoom675/Diplom/assets/115937460/b37ca21f-c60c-4102-9ed8-8895cc3f3e6b)
-![2](https://github.com/Zerodoom675/Diplom/assets/115937460/667f5b4a-90c9-4a6f-bff1-1614715808df)
-![3](https://github.com/Zerodoom675/Diplom/assets/115937460/3f720a92-bd4e-423e-94fb-d1941af4c41a)
+![1](https://github.com/Zerodoom675/Diplom/assets/115937460/2649c167-1c42-408b-8285-36bbfc2a9c20)
+![2](https://github.com/Zerodoom675/Diplom/assets/115937460/01faedc5-40ab-4dec-8b15-22855516797e)
+![3](https://github.com/Zerodoom675/Diplom/assets/115937460/656a15c1-e967-40a7-b22b-f1e344fa2faf)
 
 # Тестовое окружение
 
